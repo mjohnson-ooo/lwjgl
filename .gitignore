@@ -3,3 +3,5 @@ src/generated/**
 src/native/generated/**
 libs/lwjgl*
 bin/*
+.*.swp
+*~
