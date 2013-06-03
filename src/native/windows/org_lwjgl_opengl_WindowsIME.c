@@ -8,7 +8,7 @@ JNIEXPORT jlong JNICALL Java_org_lwjgl_opengl_WindowsIME_CreateContext (
     return (intptr_t)ImmCreateContext();
 }
 
-JNIEXPORT jboolean JNICALL Java_org_lwjgl_opengl_WindowsIMC_DestroyContext (
+JNIEXPORT jboolean JNICALL Java_org_lwjgl_opengl_WindowsIME_DestroyContext (
         JNIEnv *env, jclass unused, jlong himc_int)
 {
     HIMC himc = (HIMC)(INT_PTR)himc_int;
