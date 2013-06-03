@@ -302,6 +302,7 @@
 			<class name="org.lwjgl.opengl.WindowsDisplay"/>
 			<class name="org.lwjgl.opengl.WindowsDisplayPeerInfo"/>
 			<class name="org.lwjgl.opengl.WindowsAWTGLCanvasPeerInfo"/>
+			<class name="org.lwjgl.opengl.WindowsIME"/>
 		</javah>
 
 		<javah classpath="${lwjgl.bin}" destdir="${lwjgl.src.native}/windows/opengl" force="yes">
@@ -626,7 +627,7 @@
 			<bottom><![CDATA[<i>Copyright &#169; 2002-2009 lwjgl.org. All Rights Reserved.</i>]]></bottom>
 		</javadoc>
 	</target>
-	
+
 	<!-- get and copy nightly binaries into libs folder -->
 	<target name="copy-nightly-binaries" depends="-initialize" description="Copies latest successful nightly binaries into appropriate libs folder">
 		<delete file="${lwjgl.temp}/lwjgl-${lwjgl.version}.zip" failonerror="false"/>
@@ -635,7 +636,7 @@
 		 	<patternset>
 				<include name="**/native/**/*lwjgl*"/>
 			</patternset>
-			<globmapper from="lwjgl-${lwjgl.version}/native/*" to="*"/>	
+			<globmapper from="lwjgl-${lwjgl.version}/native/*" to="*"/>
 		</unzip>
-	</target>	
+	</target>
 </project>

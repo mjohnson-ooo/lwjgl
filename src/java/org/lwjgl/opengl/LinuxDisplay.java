@@ -85,7 +85,7 @@ final class LinuxDisplay implements DisplayImplementation {
 	private static final int SetModeInsert = 0;
 	private static final int SaveSetRoot = 1;
 	private static final int SaveSetUnmap = 1;
-	
+
 	private static final int X_SetInputFocus = 42;
 
 	/** Window mode enum */
@@ -143,12 +143,12 @@ final class LinuxDisplay implements DisplayImplementation {
 	private boolean mouseInside = true;
 	private boolean resizable;
 	private boolean resized;
-	
+
 	private int window_x;
 	private int window_y;
 	private int window_width;
 	private int window_height;
-	
+
 	private Canvas parent;
 	private long parent_window;
 	private static boolean xembedded;
@@ -311,8 +311,8 @@ final class LinuxDisplay implements DisplayImplementation {
 	private static native void synchronize(long display, boolean synchronize);
 
 	private static int globalErrorHandler(long display, long event_ptr, long error_display, long serial, long error_code, long request_code, long minor_code) throws LWJGLException {
-		if (xembedded && request_code == X_SetInputFocus) return 0; // ignore X error in xembeded mode to fix a browser issue when dragging or switching tabs 
-		
+		if (xembedded && request_code == X_SetInputFocus) return 0; // ignore X error in xembeded mode to fix a browser issue when dragging or switching tabs
+
 		if (display == getDisplay()) {
 			String error_msg = getErrorText(display, error_code);
 			throw new LWJGLException("X Error - disp: 0x" + Long.toHexString(error_display) + " serial: " + serial + " error: " + error_msg + " request_code: " + request_code + " minor_code: " + minor_code);
@@ -850,19 +850,19 @@ final class LinuxDisplay implements DisplayImplementation {
 				case LinuxEvent.ConfigureNotify:
 					int x = nGetX(getDisplay(), getWindow());
 					int y = nGetY(getDisplay(), getWindow());
-					
+
 					int width = nGetWidth(getDisplay(), getWindow());
 					int height = nGetHeight(getDisplay(), getWindow());
-					
+
 					window_x = x;
 					window_y = y;
-					
+
 					if (window_width != width || window_height != height) {
 						resized = true;
 						window_width = width;
 						window_height = height;
 					}
-					
+
 					break;
 				case LinuxEvent.EnterNotify:
 					mouseInside = true;
@@ -995,7 +995,7 @@ final class LinuxDisplay implements DisplayImplementation {
 			}
 		}
 	}
-	
+
 	private void setInputFocusUnsafe(long window) {
 		try {
 			nSetInputFocus(getDisplay(), window, CurrentTime);
@@ -1005,7 +1005,7 @@ final class LinuxDisplay implements DisplayImplementation {
 			LWJGLUtil.log("Got exception while trying to focus: " + e);
 		}
 	}
-	
+
 	private static native void nSync(long display, boolean throw_away_events) throws LWJGLException;
 
 	/**
@@ -1263,6 +1263,25 @@ final class LinuxDisplay implements DisplayImplementation {
 	}
 	static native void nDestroyCursor(long display, long cursorHandle);
 
+    /**
+     * IME handling.
+     */
+    public void createIME ()
+        throws LWJGLException
+    {
+        // TODO: Linux IME Support
+    }
+
+    public void destroyIME ()
+    {
+        // TODO: Linux IME Support
+    }
+
+    public void setIMEEnabled (boolean enabled)
+    {
+        // TODO: Linux IME Support
+    }
+
 	public int getPbufferCapabilities() {
 		lockAWT();
 		try {
@@ -1396,7 +1415,7 @@ final class LinuxDisplay implements DisplayImplementation {
 	public int getY() {
 		return window_y;
 	}
-	
+
 	public int getWidth() {
 		return window_width;
 	}
@@ -1413,7 +1432,7 @@ final class LinuxDisplay implements DisplayImplementation {
 		if (this.resizable == resizable) {
 			return;
 		}
-		
+
 		this.resizable = resizable;
 		nSetWindowSize(getDisplay(), getWindow(), window_width, window_height, resizable);
 	}
@@ -1423,7 +1442,7 @@ final class LinuxDisplay implements DisplayImplementation {
 			resized = false;
 			return true;
 		}
-		
+
 		return false;
 	}
 

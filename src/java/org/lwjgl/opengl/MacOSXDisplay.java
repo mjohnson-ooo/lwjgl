@@ -423,6 +423,22 @@ final class MacOSXDisplay implements DisplayImplementation {
 	public void destroyCursor(Object cursor_handle) {
 	}
 
+    public void createIME ()
+        throws LWJGLException
+    {
+        // TODO: Mac IME support
+    }
+
+    public void destroyIME ()
+    {
+        // TODO: Mac IME support
+    }
+
+    public void setIMEEnabled (boolean enabled)
+    {
+        // TODO: Mac IME support
+    }
+
 	public int getPbufferCapabilities() {
 		if (LWJGLUtil.isMacOSXEqualsOrBetterThan(10, 3))
 			return Pbuffer.PBUFFER_SUPPORTED;
@@ -495,7 +511,7 @@ final class MacOSXDisplay implements DisplayImplementation {
 		// Don't use any icon, since Mac OS X windows don't have window icons
 		return 0;
 	}
-	
+
 	public int getX() {
 		return frame.getX();
 	}

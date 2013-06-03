@@ -88,6 +88,20 @@ final class WindowsDisplay implements DisplayImplementation {
 	private static final int WM_KILLFOCUS                     = 8;
 	private static final int WM_SETFOCUS                      = 7;
 
+    private static final int WM_IME_STARTCOMPOSITION         = 0x010D;
+    private static final int WM_IME_ENDCOMPOSITION           = 0x010E;
+    private static final int WM_IME_COMPOSITION              = 0x010F;
+    private static final int WM_IME_KEYLAST                  = 0x010F;
+    private static final int WM_IME_SETCONTEXT               = 0x0281;
+    private static final int WM_IME_NOTIFY                   = 0x0282;
+    private static final int WM_IME_CONTROL                  = 0x0283;
+    private static final int WM_IME_COMPOSITIONFULL          = 0x0284;
+    private static final int WM_IME_SELECT                   = 0x0285;
+    private static final int WM_IME_CHAR                     = 0x0286;
+    private static final int WM_IME_REQUEST                  = 0x0288;
+    private static final int WM_IME_KEYDOWN                  = 0x0290;
+    private static final int WM_IME_KEYUP                    = 0x0291;
+
 	private static final int SC_SIZE          = 0xF000;
 	private static final int SC_MOVE          = 0xF010;
 	private static final int SC_MINIMIZE      = 0xF020;
@@ -149,9 +163,9 @@ final class WindowsDisplay implements DisplayImplementation {
 
 	private static final int WS_THICKFRAME 		= 0x00040000;
 	private static final int WS_MAXIMIZEBOX		= 0x00010000;
-	
+
 	private static final int HTCLIENT			= 0x01;
-	
+
 	private static final int MK_XBUTTON1		= 0x0020;
 	private static final int MK_XBUTTON2		= 0x0040;
 	private static final int XBUTTON1			= 0x0001;
@@ -167,6 +181,7 @@ final class WindowsDisplay implements DisplayImplementation {
 
 	private WindowsKeyboard keyboard;
 	private WindowsMouse mouse;
+    private WindowsIME ime;
 
 	private boolean close_requested;
 	private boolean is_dirty;
@@ -664,6 +679,26 @@ final class WindowsDisplay implements DisplayImplementation {
 	}
 	static native void doDestroyCursor(Object cursorHandle);
 
+    /**
+     * IME handling.
+     */
+    public void createIME ()
+        throws LWJGLException
+    {
+        ime = new WindowsIME(getHwnd());
+    }
+
+    public void destroyIME ()
+    {
+        ime.destroy();
+        ime = null;
+    }
+
+    public void setIMEEnabled (boolean enabled)
+    {
+        ime.setEnabled(enabled);
+    }
+
 	public int getPbufferCapabilities() {
 		try {
 		// Return the capabilities of a minimum pixel format
@@ -904,7 +939,7 @@ final class WindowsDisplay implements DisplayImplementation {
 				} else {
 					// let Windows handle cursors outside the client area for resizing, etc.
 					return defWindowProc(hwnd, msg, wParam, lParam);
-				}				
+				}
 			case WM_KILLFOCUS:
 				appActivate(false);
 				return 0;
@@ -1016,11 +1051,25 @@ final class WindowsDisplay implements DisplayImplementation {
 				x = (int)(short)(lParam & 0xFFFF);
 				y = (int)(short)(lParam >> 16);
 				return defWindowProc(hwnd, msg, wParam, lParam);
+            case WM_IME_STARTCOMPOSITION:
+            case WM_IME_ENDCOMPOSITION:
+            case WM_IME_COMPOSITION:
+            // case WM_IME_KEYLAST: Same as WM_IME_COMPOSITION
+            case WM_IME_SETCONTEXT:
+            case WM_IME_NOTIFY:
+            case WM_IME_CONTROL:
+            case WM_IME_COMPOSITIONFULL:
+            case WM_IME_SELECT:
+            case WM_IME_CHAR:
+            case WM_IME_REQUEST:
+            case WM_IME_KEYDOWN:
+            case WM_IME_KEYUP:
+				return defWindowProc(hwnd, msg, wParam, lParam);
 			default:
 				return defWindowProc(hwnd, msg, wParam, lParam);
 		}
 	}
-	
+
 	public int getX() {
 		return x;
 	}

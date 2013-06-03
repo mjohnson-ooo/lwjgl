@@ -82,7 +82,7 @@ public interface InputImplementation {
 
 	/** Method to set the native cursor position */
 	void setCursorPosition(int x, int y);
-	
+
 	/** Method to set the native cursor */
 	void setNativeCursor(Object handle) throws LWJGLException;
 
@@ -120,6 +120,25 @@ public interface InputImplementation {
 	void readKeyboard(ByteBuffer buffer);
 
 //	int isStateKeySet(int key);
+
+    /**
+     * IME methods.
+     */
+
+    /**
+     * Method to create the IME handler.
+     */
+    void createIME () throws LWJGLException;
+
+    /**
+     * Method to destroy the IME handler.
+     */
+    void destroyIME ();
+
+    /**
+     * Method to set the enabled state of IME.
+     */
+    void setIMEEnabled (boolean enabled);
 
 	/** Native cursor handles */
 	Object createCursor(int width, int height, int xHotspot, int yHotspot, int numImages, IntBuffer images, IntBuffer delays) throws LWJGLException;
