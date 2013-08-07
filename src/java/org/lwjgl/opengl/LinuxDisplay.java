@@ -1282,6 +1282,27 @@ final class LinuxDisplay implements DisplayImplementation {
         // TODO: Linux IME Support
     }
 
+    public void setIMEComposing (boolean composing)
+    {
+        // TODO: Linux IME Support
+    }
+
+    public String getIMEComposition ()
+    {
+        return "";
+    }
+
+    public String getIMEResult ()
+    {
+        return "";
+    }
+
+    public int getIMECursorPosition ()
+    {
+        return 0;
+    }
+
+
 	public int getPbufferCapabilities() {
 		lockAWT();
 		try {

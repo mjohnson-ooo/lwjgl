@@ -102,4 +102,60 @@ public class IME
         }
     }
 
+    /**
+     * Set the composing state of the ime.  When set to true, all IME messages are intercepted
+     * and will be handled by the IME rather than the default system handling.
+     */
+    public static void setComposing (boolean composing)
+    {
+        synchronized (OpenGLPackageAccess.global_lock) {
+            if (!created) {
+                throw new IllegalStateException(
+                        "IME must be created before you can change composing state");
+            }
+            implementation.setIMEComposing(composing);
+        }
+    }
+
+    /**
+     * Get the current composition string.
+     */
+    public static String getComposition ()
+    {
+        synchronized (OpenGLPackageAccess.global_lock) {
+            if (!created) {
+                throw new IllegalStateException(
+                        "IME must be created before you can change composing state");
+            }
+            return implementation.getIMEComposition();
+        }
+    }
+
+    /**
+     * Get the current result string.
+     */
+    public static String getResult ()
+    {
+        synchronized (OpenGLPackageAccess.global_lock) {
+            if (!created) {
+                throw new IllegalStateException(
+                        "IME must be created before you can change composing state");
+            }
+            return implementation.getIMEResult();
+        }
+    }
+
+    /**
+     * Get the current cursor position.
+     */
+    public static int getCursorPosition ()
+    {
+        synchronized (OpenGLPackageAccess.global_lock) {
+            if (!created) {
+                throw new IllegalStateException(
+                        "IME must be created before you can change composing state");
+            }
+            return implementation.getIMECursorPosition();
+        }
+    }
 }

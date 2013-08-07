@@ -88,20 +88,6 @@ final class WindowsDisplay implements DisplayImplementation {
 	private static final int WM_KILLFOCUS                     = 8;
 	private static final int WM_SETFOCUS                      = 7;
 
-    private static final int WM_IME_STARTCOMPOSITION         = 0x010D;
-    private static final int WM_IME_ENDCOMPOSITION           = 0x010E;
-    private static final int WM_IME_COMPOSITION              = 0x010F;
-    private static final int WM_IME_KEYLAST                  = 0x010F;
-    private static final int WM_IME_SETCONTEXT               = 0x0281;
-    private static final int WM_IME_NOTIFY                   = 0x0282;
-    private static final int WM_IME_CONTROL                  = 0x0283;
-    private static final int WM_IME_COMPOSITIONFULL          = 0x0284;
-    private static final int WM_IME_SELECT                   = 0x0285;
-    private static final int WM_IME_CHAR                     = 0x0286;
-    private static final int WM_IME_REQUEST                  = 0x0288;
-    private static final int WM_IME_KEYDOWN                  = 0x0290;
-    private static final int WM_IME_KEYUP                    = 0x0291;
-
 	private static final int SC_SIZE          = 0xF000;
 	private static final int SC_MOVE          = 0xF010;
 	private static final int SC_MINIMIZE      = 0xF020;
@@ -699,6 +685,26 @@ final class WindowsDisplay implements DisplayImplementation {
         ime.setEnabled(enabled);
     }
 
+    public void setIMEComposing (boolean composing)
+    {
+        ime.setComposing(composing);
+    }
+
+    public String getIMEComposition ()
+    {
+        return ime.getComposition();
+    }
+
+    public String getIMEResult ()
+    {
+        return ime.getResult();
+    }
+
+    public int getIMECursorPosition ()
+    {
+        return ime.getCursorPosition();
+    }
+
 	public int getPbufferCapabilities() {
 		try {
 		// Return the capabilities of a minimum pixel format
@@ -1051,21 +1057,10 @@ final class WindowsDisplay implements DisplayImplementation {
 				x = (int)(short)(lParam & 0xFFFF);
 				y = (int)(short)(lParam >> 16);
 				return defWindowProc(hwnd, msg, wParam, lParam);
-            case WM_IME_STARTCOMPOSITION:
-            case WM_IME_ENDCOMPOSITION:
-            case WM_IME_COMPOSITION:
-            // case WM_IME_KEYLAST: Same as WM_IME_COMPOSITION
-            case WM_IME_SETCONTEXT:
-            case WM_IME_NOTIFY:
-            case WM_IME_CONTROL:
-            case WM_IME_COMPOSITIONFULL:
-            case WM_IME_SELECT:
-            case WM_IME_CHAR:
-            case WM_IME_REQUEST:
-            case WM_IME_KEYDOWN:
-            case WM_IME_KEYUP:
-				return defWindowProc(hwnd, msg, wParam, lParam);
 			default:
+                if (ime != null && ime.handlesMessage(msg)) {
+                    return ime.doHandleMessage(hwnd, msg, wParam, lParam);
+                }
 				return defWindowProc(hwnd, msg, wParam, lParam);
 		}
 	}
