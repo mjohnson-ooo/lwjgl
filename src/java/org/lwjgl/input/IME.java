@@ -1,5 +1,8 @@
 package org.lwjgl.input;
 
+import java.util.ArrayDeque;
+import java.util.Queue;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
@@ -10,6 +13,8 @@ import org.lwjgl.opengl.InputImplementation;
  */
 public class IME
 {
+    /** IME event states. */
+    public enum State { NONE, START, END, EVENT };
 
     /** Has the IME been created? */
     private static boolean created;
@@ -19,6 +24,12 @@ public class IME
 
     /** The native implementation. */
     private static InputImplementation implementation;
+
+    /** Current event. */
+    private static IMEEvent _currentEvent = new IMEEvent();
+
+    /** The event queue. */
+    private static Queue<IMEEvent> _queue = new ArrayDeque<IMEEvent>();
 
     /**
      * IME cannot be constructed.
@@ -51,6 +62,7 @@ public class IME
         implementation = impl;
         implementation.createIME();
         created = true;
+        reset();
     }
 
     /**
@@ -65,6 +77,11 @@ public class IME
 
             create(OpenGLPackageAccess.createImplementation());
         }
+    }
+
+    private static void reset ()
+    {
+        _currentEvent.reset();
     }
 
     /**
@@ -85,6 +102,19 @@ public class IME
                 return;
             created = false;
             implementation.destroyIME();
+            reset();
+        }
+    }
+
+    /**
+     * Polls the IME to update the event queue.  Access polled values with calls to
+     * <code>next</code> for each event you want to read.
+     */
+    public static void poll () {
+        synchronized (OpenGLPackageAccess.global_lock) {
+            if (!created)
+                throw new IllegalStateException("IME must be created before you can poll.");
+            implementation.readIME(_queue);
         }
     }
 
@@ -118,16 +148,29 @@ public class IME
     }
 
     /**
+     * Gets the next IME event.
+     */
+    public static boolean next ()
+    {
+        synchronized (OpenGLPackageAccess.global_lock) {
+            if (!created) {
+                throw new IllegalStateException("IME must be created before you can read events");
+            }
+            if (_queue.isEmpty()) {
+                return false;
+            }
+            _queue.poll().copy(_currentEvent);
+            return true;
+        }
+    }
+
+    /**
      * Get the current composition string.
      */
     public static String getComposition ()
     {
         synchronized (OpenGLPackageAccess.global_lock) {
-            if (!created) {
-                throw new IllegalStateException(
-                        "IME must be created before you can change composing state");
-            }
-            return implementation.getIMEComposition();
+            return _currentEvent.composition;
         }
     }
 
@@ -137,11 +180,7 @@ public class IME
     public static String getResult ()
     {
         synchronized (OpenGLPackageAccess.global_lock) {
-            if (!created) {
-                throw new IllegalStateException(
-                        "IME must be created before you can change composing state");
-            }
-            return implementation.getIMEResult();
+            return _currentEvent.result;
         }
     }
 
@@ -151,11 +190,28 @@ public class IME
     public static int getCursorPosition ()
     {
         synchronized (OpenGLPackageAccess.global_lock) {
-            if (!created) {
-                throw new IllegalStateException(
-                        "IME must be created before you can change composing state");
-            }
-            return implementation.getIMECursorPosition();
+            return _currentEvent.cursorPos;
+        }
+    }
+
+    public static final class IMEEvent {
+        public String composition;
+        public String result;
+        public int cursorPos;
+        public State state = State.START;
+
+        public void reset () {
+            composition = null;
+            result = null;
+            cursorPos = 0;
+            state = State.NONE;
+        }
+
+        public void copy (IMEEvent other) {
+            other.composition = composition;
+            other.result = result;
+            other.cursorPos = cursorPos;
+            other.state = state;
         }
     }
 }

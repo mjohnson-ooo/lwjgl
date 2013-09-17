@@ -45,6 +45,7 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.*;
 import org.lwjgl.input.Controllers;
+import org.lwjgl.input.IME;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -401,7 +402,7 @@ public final class Display {
 	/**
 	 * An accurate sync method that will attempt to run at a constant frame rate.
 	 * It should be called once every frame.
-	 * 
+	 *
 	 * @param fps - the desired frame rate, in frames per second
 	 */
 	public static void sync(int fps) {
@@ -678,6 +679,10 @@ public final class Display {
 		if ( Controllers.isCreated() ) {
 			Controllers.poll();
 		}
+
+        if (IME.isCreated()) {
+            IME.poll();
+        }
 	}
 
 	/**
@@ -1257,7 +1262,7 @@ public final class Display {
 	 * @return this method will return the x position (top-left) of the Display window.
 	 *
 	 * If running in fullscreen mode it will return 0.
-	 * If Display.setParent(Canvas parent) is being used, the x position of 
+	 * If Display.setParent(Canvas parent) is being used, the x position of
 	 * the parent will be returned.
 	 */
 	public static int getX() {
@@ -1272,12 +1277,12 @@ public final class Display {
 
 		return display_impl.getX();
 	}
-	
+
 	/**
 	 * @return this method will return the y position (top-left) of the Display window.
 	 *
 	 * If running in fullscreen mode it will return 0.
-	 * If Display.setParent(Canvas parent) is being used, the y position of 
+	 * If Display.setParent(Canvas parent) is being used, the y position of
 	 * the parent will be returned.
 	 */
 	public static int getY() {
@@ -1292,7 +1297,7 @@ public final class Display {
 
 		return display_impl.getY();
 	}
-	
+
 	/**
 	 * @return this method will return the width of the Display window.
 	 *

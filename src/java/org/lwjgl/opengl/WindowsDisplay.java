@@ -40,12 +40,14 @@ package org.lwjgl.opengl;
 
 import java.nio.*;
 import java.awt.Canvas;
+import java.util.Queue;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.LWJGLUtil;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.MemoryUtil;
 import org.lwjgl.input.Cursor;
+import org.lwjgl.input.IME.IMEEvent;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengles.EGL;
 
@@ -678,6 +680,11 @@ final class WindowsDisplay implements DisplayImplementation {
     {
         ime.destroy();
         ime = null;
+    }
+
+    public void readIME (Queue<IMEEvent> queue)
+    {
+        ime.read(queue);
     }
 
     public void setIMEEnabled (boolean enabled)

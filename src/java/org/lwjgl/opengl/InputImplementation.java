@@ -40,8 +40,10 @@ package org.lwjgl.opengl;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.util.Queue;
 
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.IME.IMEEvent;
 
 public interface InputImplementation {
 	/*
@@ -134,6 +136,11 @@ public interface InputImplementation {
      * Method to destroy the IME handler.
      */
     void destroyIME ();
+
+	/**
+	 * Method to read the IME event queue.
+	 */
+	void readIME (Queue<IMEEvent> queue);
 
     /**
      * Method to set the enabled state of IME.

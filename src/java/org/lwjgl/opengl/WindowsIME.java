@@ -4,7 +4,11 @@ package org.lwjgl.opengl;
  * This is the Windows implementation of the IME handling.
  */
 
+import java.util.Queue;
+
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.IME.IMEEvent;
+import org.lwjgl.input.IME.State;
 
 final class WindowsIME {
 
@@ -74,6 +78,11 @@ final class WindowsIME {
         _composing = composing;
     }
 
+    public void read (Queue<IMEEvent> queue)
+    {
+        _queue.copyEvents(queue);
+    }
+
     /**
      * The current composition string.
      */
@@ -115,33 +124,36 @@ final class WindowsIME {
     {
         switch (msg) {
         case WM_IME_STARTCOMPOSITION:
-            _composition = "";
-            _result = "";
-            _cursorPos = 0;
+            _event.reset();
+            _event.state = State.START;
+            _queue.putEvent(_event);
             break;
         case WM_IME_ENDCOMPOSITION:
-            _composition = "";
-            _cursorPos = 0;
+            _event.state = State.END;
+            _queue.putEvent(_event);
+            _event.reset();
             break;
         case WM_IME_COMPOSITION:
             if ((lParam & GCS_RESULTSTR) != 0) {
                 StringReturner result = ImmGetCompositionString(himc, GCS_RESULTSTR);
                 if (result.result >= 0) {
-                    _result = result.buf;
+                    _event.result = result.buf;
                 }
             }
             if ((lParam & GCS_COMPSTR) != 0) {
                 StringReturner result = ImmGetCompositionString(himc, GCS_COMPSTR);
                 if (result.result >= 0) {
-                    _composition = result.buf;
+                    _event.composition = result.buf;
                 }
             }
             if ((lParam & GCS_CURSORPOS) != 0) {
                 StringReturner result = ImmGetCompositionString(himc, GCS_CURSORPOS);
                 if (result.result >= 0) {
-                    _cursorPos = result.result;
+                    _event.cursorPos = result.result;
                 }
             }
+            _event.state = State.EVENT;
+            _queue.putEvent(_event);
             break;
         }
         return 0;
@@ -155,6 +167,9 @@ final class WindowsIME {
 
     private boolean _enabled = false;
     private boolean _composing = false;
+
+    private IMEEvent _event = new IMEEvent();
+    private IMEQueue _queue = new IMEQueue();
 
     private String _composition = "";
     private String _result = "";

@@ -54,6 +54,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.LWJGLUtil;
 import org.lwjgl.MemoryUtil;
+import org.lwjgl.input.IME.IMEEvent;
 import org.lwjgl.opengl.XRandR.Screen;
 import org.lwjgl.opengles.EGL;
 
@@ -61,6 +62,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
 final class LinuxDisplay implements DisplayImplementation {
 	/* X11 constants */
@@ -1273,6 +1275,11 @@ final class LinuxDisplay implements DisplayImplementation {
     }
 
     public void destroyIME ()
+    {
+        // TODO: Linux IME Support
+    }
+
+    public void readIME (Queue<IMEEvent> queue)
     {
         // TODO: Linux IME Support
     }

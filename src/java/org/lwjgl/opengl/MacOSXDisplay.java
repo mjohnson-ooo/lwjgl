@@ -49,10 +49,12 @@ import java.security.PrivilegedAction;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.LWJGLUtil;
+import org.lwjgl.input.IME.IMEEvent;
 
 import com.apple.eawt.Application;
 import com.apple.eawt.ApplicationAdapter;
@@ -430,6 +432,11 @@ final class MacOSXDisplay implements DisplayImplementation {
     }
 
     public void destroyIME ()
+    {
+        // TODO: Mac IME support
+    }
+
+    public void readIME (Queue<IMEEvent> queue)
     {
         // TODO: Mac IME support
     }
