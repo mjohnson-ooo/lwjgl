@@ -83,30 +83,6 @@ final class WindowsIME {
         _queue.copyEvents(queue);
     }
 
-    /**
-     * The current composition string.
-     */
-    public String getComposition ()
-    {
-        return _composition;
-    }
-
-    /**
-     * The current result string.
-     */
-    public String getResult ()
-    {
-        return _result;
-    }
-
-    /**
-     * The current cursor position.
-     */
-    public int getCursorPosition ()
-    {
-        return _cursorPos;
-    }
-
     public boolean handlesMessage (int msg)
     {
         switch (msg) {
@@ -114,6 +90,14 @@ final class WindowsIME {
         case WM_IME_ENDCOMPOSITION:
         case WM_IME_COMPOSITION:
         case WM_IME_NOTIFY:
+        case WM_IME_SETCONTEXT:
+        case WM_IME_CONTROL:
+        case WM_IME_COMPOSITIONFULL:
+        case WM_IME_SELECT :
+        case WM_IME_CHAR:
+        case WM_IME_REQUEST:
+        case WM_IME_KEYDOWN:
+        case WM_IME_KEYUP:
             return _composing;
         default:
             return false;
@@ -137,23 +121,27 @@ final class WindowsIME {
             if ((lParam & GCS_RESULTSTR) != 0) {
                 StringReturner result = ImmGetCompositionString(himc, GCS_RESULTSTR);
                 if (result.result >= 0) {
-                    _event.result = result.buf;
+                    _event.str = result.buf;
+                    _event.state = State.RESULT;
+                    _queue.putEvent(_event);
                 }
             }
             if ((lParam & GCS_COMPSTR) != 0) {
                 StringReturner result = ImmGetCompositionString(himc, GCS_COMPSTR);
                 if (result.result >= 0) {
-                    _event.composition = result.buf;
+                    _event.str = result.buf;
+                    _event.state = State.COMPOSE;
+                    _queue.putEvent(_event);
                 }
             }
             if ((lParam & GCS_CURSORPOS) != 0) {
                 StringReturner result = ImmGetCompositionString(himc, GCS_CURSORPOS);
                 if (result.result >= 0) {
                     _event.cursorPos = result.result;
+                    _event.state = State.COMPOSE;
+                    _queue.putEvent(_event);
                 }
             }
-            _event.state = State.EVENT;
-            _queue.putEvent(_event);
             break;
         }
         return 0;
@@ -170,10 +158,6 @@ final class WindowsIME {
 
     private IMEEvent _event = new IMEEvent();
     private IMEQueue _queue = new IMEQueue();
-
-    private String _composition = "";
-    private String _result = "";
-    private int _cursorPos = 0;
 
     private final long hwnd;
     private final long himc;

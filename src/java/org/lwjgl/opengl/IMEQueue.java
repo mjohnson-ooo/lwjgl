@@ -23,9 +23,10 @@ class IMEQueue {
             _queue.addLast(_currentEvent);
         }
         event.copy(_currentEvent);
-        if (_currentEvent.state == State.END) {
+        if (_currentEvent.state == State.END || _currentEvent.state == State.RESULT) {
             _currentEvent = null;
         }
+        System.out.println("IMEEvent.putEvent, state=" + event.state.name() + ", size=" + _queue.size());
     }
 
     public synchronized void copyEvents (Queue<IMEEvent> queue)
@@ -33,7 +34,10 @@ class IMEQueue {
         for (IMEEvent event : _queue) {
             queue.add(event);
         }
-        queue.clear();
+        if (_queue.size() > 0) {
+            System.out.println("IMEEvent.copyEvents, in size=" + _queue.size() + ", out size=" + queue.size());
+        }
+        _queue.clear();
         _currentEvent = null;
     }
 }

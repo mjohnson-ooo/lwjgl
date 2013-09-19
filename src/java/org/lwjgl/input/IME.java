@@ -14,7 +14,7 @@ import org.lwjgl.opengl.InputImplementation;
 public class IME
 {
     /** IME event states. */
-    public enum State { NONE, START, END, EVENT };
+    public enum State { NONE, START, END, COMPOSE, RESULT };
 
     /** Has the IME been created? */
     private static boolean created;
@@ -165,22 +165,12 @@ public class IME
     }
 
     /**
-     * Get the current composition string.
-     */
-    public static String getComposition ()
-    {
-        synchronized (OpenGLPackageAccess.global_lock) {
-            return _currentEvent.composition;
-        }
-    }
-
-    /**
      * Get the current result string.
      */
-    public static String getResult ()
+    public static String getString ()
     {
         synchronized (OpenGLPackageAccess.global_lock) {
-            return _currentEvent.result;
+            return _currentEvent.str;
         }
     }
 
@@ -194,22 +184,29 @@ public class IME
         }
     }
 
+    /**
+     * Get the current event state.
+     */
+    public static State getState ()
+    {
+        synchronized (OpenGLPackageAccess.global_lock) {
+            return _currentEvent.state;
+        }
+    }
+
     public static final class IMEEvent {
-        public String composition;
-        public String result;
+        public String str;
         public int cursorPos;
         public State state = State.START;
 
         public void reset () {
-            composition = null;
-            result = null;
+            str = null;
             cursorPos = 0;
             state = State.NONE;
         }
 
         public void copy (IMEEvent other) {
-            other.composition = composition;
-            other.result = result;
+            other.str = str;
             other.cursorPos = cursorPos;
             other.state = state;
         }
