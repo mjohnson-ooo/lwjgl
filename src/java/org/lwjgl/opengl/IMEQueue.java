@@ -26,16 +26,12 @@ class IMEQueue {
         if (_currentEvent.state == State.END || _currentEvent.state == State.RESULT) {
             _currentEvent = null;
         }
-        System.out.println("IMEEvent.putEvent, state=" + event.state.name() + ", size=" + _queue.size());
     }
 
     public synchronized void copyEvents (Queue<IMEEvent> queue)
     {
         for (IMEEvent event : _queue) {
             queue.add(event);
-        }
-        if (_queue.size() > 0) {
-            System.out.println("IMEEvent.copyEvents, in size=" + _queue.size() + ", out size=" + queue.size());
         }
         _queue.clear();
         _currentEvent = null;
