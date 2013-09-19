@@ -42,17 +42,18 @@ JNIEXPORT jobject JNICALL Java_org_lwjgl_opengl_WindowsIME_ImmGetCompositionStri
 {
     HIMC himc = (HIMC)(INT_PTR)himc_int;
     DWORD dwIndex = (DWORD)dw_index_int;
-    LONG result = ImmGetCompositionString(himc, dwIndex, (LPVOID)NULL, 0l);
-    LPVOID buf;
+    DWORD result = ImmGetCompositionStringW(himc, dwIndex, (LPVOID)NULL, 0l);
+    LPWSTR lpstr;
     jstring str;
 
     if (dwIndex == GCS_CURSORPOS || dwIndex == GCS_DELTASTART ||
             result == IMM_ERROR_NODATA || result == IMM_ERROR_GENERAL) {
         return getStringReturner(env, (jint)result, (jstring)NULL);
     }
-    buf = malloc(result);
-    result = ImmGetCompositionString(himc, dwIndex, buf, result);
-    str = (*env)->NewStringUTF(env, buf);
-    free(buf);
+
+    lpstr = (LPWSTR)malloc(result);
+    result = ImmGetCompositionStringW(himc, dwIndex, lpstr, result);
+    str = (*env)->NewString(env, lpstr, result/sizeof(WCHAR));
+    free(lpstr);
     return getStringReturner(env, (jint)result, str);
 }
