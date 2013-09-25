@@ -451,22 +451,6 @@ final class MacOSXDisplay implements DisplayImplementation {
         // TODO: Mac IME support
     }
 
-    public String getIMEComposition ()
-    {
-        return "";
-    }
-
-    public String getIMEResult ()
-    {
-        return "";
-    }
-
-    public int getIMECursorPosition ()
-    {
-        return 0;
-    }
-
-
 	public int getPbufferCapabilities() {
 		if (LWJGLUtil.isMacOSXEqualsOrBetterThan(10, 3))
 			return Pbuffer.PBUFFER_SUPPORTED;

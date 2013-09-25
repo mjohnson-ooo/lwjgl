@@ -96,8 +96,6 @@ final class WindowsIME {
         case WM_IME_SELECT :
         case WM_IME_CHAR:
         case WM_IME_REQUEST:
-        case WM_IME_KEYDOWN:
-        case WM_IME_KEYUP:
             return _composing;
         default:
             return false;

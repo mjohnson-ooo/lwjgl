@@ -90,6 +90,9 @@ final class WindowsDisplay implements DisplayImplementation {
 	private static final int WM_KILLFOCUS                     = 8;
 	private static final int WM_SETFOCUS                      = 7;
 
+    public static final int WM_IME_KEYDOWN                  = 0x0290;
+    public static final int WM_IME_KEYUP                    = 0x0291;
+
 	private static final int SC_SIZE          = 0xF000;
 	private static final int SC_MOVE          = 0xF010;
 	private static final int SC_MINIMIZE      = 0xF020;
@@ -697,21 +700,6 @@ final class WindowsDisplay implements DisplayImplementation {
         ime.setComposing(composing);
     }
 
-    public String getIMEComposition ()
-    {
-        return ime.getComposition();
-    }
-
-    public String getIMEResult ()
-    {
-        return ime.getResult();
-    }
-
-    public int getIMECursorPosition ()
-    {
-        return ime.getCursorPosition();
-    }
-
 	public int getPbufferCapabilities() {
 		try {
 		// Return the capabilities of a minimum pixel format
@@ -1009,6 +997,11 @@ final class WindowsDisplay implements DisplayImplementation {
 			case WM_CHAR:
 				handleChar(wParam, lParam, millis);
 				return 0;
+            case WM_IME_KEYUP:
+                if (ime == null || !ime.handlesMessage(msg)) {
+                    return defWindowProc(hwnd, msg, wParam, lParam);
+                }
+				/* Fall through */
 			case WM_SYSKEYUP:
 				/* Fall through */
 			case WM_KEYUP:
@@ -1027,6 +1020,11 @@ final class WindowsDisplay implements DisplayImplementation {
 			case WM_KEYDOWN:
 				handleKeyButton(wParam, lParam, millis);
 				return defWindowProc(hwnd, msg, wParam, lParam);
+            case WM_IME_KEYDOWN:
+                if (ime != null && ime.handlesMessage(msg)) {
+                    handleKeyButton(wParam, lParam, millis);
+                }
+                return defWindowProc(hwnd, msg, wParam, lParam);
 			case WM_QUIT:
 				close_requested = true;
 				return 0;

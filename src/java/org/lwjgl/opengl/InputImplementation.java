@@ -152,21 +152,6 @@ public interface InputImplementation {
      */
     void setIMEComposing (boolean composing);
 
-    /**
-     * Get the current IME composition string.
-     */
-    String getIMEComposition ();
-
-    /**
-     * Get the current IME result string.
-     */
-    String getIMEResult ();
-
-    /**
-     * Get the current IME cursor position.
-     */
-    int getIMECursorPosition ();
-
 	/** Native cursor handles */
 	Object createCursor(int width, int height, int xHotspot, int yHotspot, int numImages, IntBuffer images, IntBuffer delays) throws LWJGLException;
 
